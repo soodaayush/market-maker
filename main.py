@@ -2,6 +2,8 @@
 import random
 import time
 
+from market_maker import fill_order_book, adjust_mid_price, calculate_PnL, adjust_spread
+
 # - Program is based on a ticker, where
 # 	- Mid prices are updated every tick to determine bid and ask using a specified spread (+- 0.5)
 # 	- Every tick, market maker posts new bid and ask
@@ -34,33 +36,19 @@ import time
 
 # Global Variables
 
-SPREAD = 0.1
+BASE_SPREAD = 0.1
 TICKER = 0
 MID_PRICE = 100
 CASH = 500
-INVENTORY = 100
+INVENTORY = 0
+MAX_INVENTORY = 20
+MIN_INVENTORY = -20
+SKEW_FACTOR = 0.01
 
-def increment_ticker():
-    global TICKER
 
-    TICKER += 1
+prices = []
+spread = 0
 
-def fill_order_book():
-    bid = round(MID_PRICE - (SPREAD / 2), 2)
-    ask = round(MID_PRICE + (SPREAD / 2), 2)
-
-    order_book = {}
-
-    order_book["bid"] = {"bid": bid, "quantity": 1}
-    order_book["ask"] = {"ask": ask, "quantity": 1}
-
-    return order_book
-
-def adjust_mid_price():
-    global MID_PRICE
-    random_num = round(random.uniform(-0.05, 0.05), 2)
-
-    MID_PRICE = round(MID_PRICE + random_num, 2)
 
 def trade(order_book):
     global INVENTORY, CASH
@@ -69,13 +57,13 @@ def trade(order_book):
     price = 0
     random_num = random.randint(0, 1)
 
-    if random_num == 0:
+    if random_num == 0 and INVENTORY > MIN_INVENTORY:
         trader_action = "BUY"
         ask_data = order_book["ask"]
         price = ask_data.get("ask")
         INVENTORY -= 1
         CASH += price
-    elif random_num == 1:
+    elif random_num == 1 and INVENTORY < MAX_INVENTORY:
         trader_action = "SELL"
         bid_data = order_book["bid"]
         price = bid_data.get("bid")
@@ -84,16 +72,17 @@ def trade(order_book):
 
     return trader_action, price
 
-def calculate_PnL():
-    PnL = CASH + (INVENTORY * MID_PRICE)
-    return PnL
 
 while True:
-    increment_ticker()
-    order_book = fill_order_book()
+    reservation_price = MID_PRICE - (INVENTORY * SKEW_FACTOR)
+    prices.append(MID_PRICE)
+    TICKER += 1
+
+    spread = adjust_spread(spread, BASE_SPREAD, prices)
+    order_book = fill_order_book(spread, reservation_price)
     action, price = trade(order_book)
-    PnL = calculate_PnL()
-    adjust_mid_price()
+    total_pnl, inventory_pnl = calculate_PnL(CASH, INVENTORY, prices, MID_PRICE)
+    MID_PRICE = adjust_mid_price(MID_PRICE)
 
     print(f"Tick: {TICKER}")
     print(f"Mid Price: {MID_PRICE}")
@@ -102,7 +91,8 @@ while True:
     print(f"Trade Price: ${price}")
     print(f"Inventory: {INVENTORY}")
     print(f"Cash: ${round(CASH, 2)}")
-    print(f"PnL: ${round(PnL, 2)}")
+    print(f"Total PnL: ${round(total_pnl, 2)}")
+    print(f"Inventory PnL: ${round(inventory_pnl, 2)}")
 
     print("\n")
 
