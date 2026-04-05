@@ -20,17 +20,19 @@ def adjust_mid_price(mid_price):
 
 def calculate_PnL(cash, inventory, prices, mid_price):
     total_pnl = cash + (inventory * mid_price)
-    inventory_pnl = inventory * (mid_price - prices[len(prices) - 1])
-    print((mid_price - prices[len(prices) - 1]))
+    inventory_pnl = 0
+
+    if len(prices) > 1:
+        inventory_pnl = inventory * (mid_price - prices[-2])
+    else:
+        inventory_pnl = 0
 
     return total_pnl, inventory_pnl
 
-def adjust_spread(spread, base_spread, prices):
+def adjust_spread(base_spread, prices):
     if len(prices) > 2:
         changes = numpy.diff(prices)
         volatility = numpy.std(changes)
-        spread = base_spread + (K * volatility)
-    else:
-        spread = base_spread
+        return base_spread + (K * volatility)
 
-    return spread
+    return base_spread
