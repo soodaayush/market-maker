@@ -58,7 +58,7 @@ while True:
 
     spread = adjust_spread(BASE_SPREAD, prices)
     order_book = fill_order_book(spread, reservation_price)
-    action, price = trade(order_book, INVENTORY, MIN_INVENTORY, MAX_INVENTORY, CASH)
+    action, price = trade(order_book, INVENTORY, MIN_INVENTORY, MAX_INVENTORY, CASH, prices, MID_PRICE)
     MID_PRICE = adjust_mid_price(MID_PRICE)
     total_pnl, inventory_pnl = calculate_PnL(CASH, INVENTORY, prices, MID_PRICE)
 
