@@ -50,6 +50,7 @@ spread = 0
 
 while True:
     reservation_price = MID_PRICE - (INVENTORY * SKEW_FACTOR)
+    new_mid_price = 0
     prices.append(MID_PRICE)
     TICKER += 1
 
@@ -58,12 +59,13 @@ while True:
 
     spread = adjust_spread(BASE_SPREAD, prices)
     order_book = fill_order_book(spread, reservation_price)
-    action, price = trade(order_book, INVENTORY, MIN_INVENTORY, MAX_INVENTORY, CASH, prices, MID_PRICE)
-    MID_PRICE = adjust_mid_price(MID_PRICE)
+    new_mid_price = adjust_mid_price(MID_PRICE)
+    action, price, INVENTORY, CASH = trade(order_book, INVENTORY, MIN_INVENTORY, MAX_INVENTORY, CASH, prices, MID_PRICE, new_mid_price)
+    MID_PRICE = new_mid_price
     total_pnl, inventory_pnl = calculate_PnL(CASH, INVENTORY, prices, MID_PRICE)
 
     print(f"Tick: {TICKER}")
-    print(f"Mid Price: {MID_PRICE}")
+    print(f"Mid Price: ${MID_PRICE}")
     print(f"Market Maker Quote: Bid=${order_book['bid'].get('bid')} Ask=${order_book['ask'].get('ask')}")
     print(f"Trader Action: {action}")
     print(f"Trade Price: ${price}")
