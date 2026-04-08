@@ -37,6 +37,7 @@ from trader import trade
 # Global Variables
 
 BASE_SPREAD = 0.1
+MAX_TICKS = 20
 TICKER = 0
 MID_PRICE = 100
 CASH = 500
@@ -48,10 +49,8 @@ SKEW_FACTOR = 0.01
 prices = []
 spread = 0
 
-while True:
+while TICKER < MAX_TICKS:
     reservation_price = MID_PRICE - (INVENTORY * SKEW_FACTOR)
-    new_mid_price = 0
-    prices.append(MID_PRICE)
     TICKER += 1
 
     if len(prices) > 50:
@@ -63,6 +62,8 @@ while True:
     action, price, INVENTORY, CASH = trade(order_book, INVENTORY, MIN_INVENTORY, MAX_INVENTORY, CASH, prices, MID_PRICE, new_mid_price)
     MID_PRICE = new_mid_price
     total_pnl, inventory_pnl = calculate_PnL(CASH, INVENTORY, prices, MID_PRICE)
+
+    prices.append(MID_PRICE)
 
     print(f"Tick: {TICKER}")
     print(f"Mid Price: ${MID_PRICE}")

@@ -34,7 +34,7 @@ def random_trade(order_book, inventory, min_inventory, max_inventory, cash):
     return trader_action, price, inventory, cash
 
 def momentum_trade(order_book, inventory, cash, prices, mid_price):
-    recent_change = mid_price - prices[-5]
+    recent_change = prices[-1] - prices[-5]
     trader_action = ""
     price = 0
 
