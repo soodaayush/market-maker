@@ -3,36 +3,57 @@ import numpy
 
 K = 3
 
-def fill_order_book(spread, reservation_price):
-    bid = round(reservation_price - (spread / 2), 2)
-    ask = round(reservation_price + (spread / 2), 2)
+class MarketMaker:
+    def __init__(self, spread, mid_price, cash, inventory, prices, base_spread, skew_factor):
+        self.spread = spread
+        self.mid_price = mid_price
+        self.cash = cash
+        self.inventory = inventory
+        self.prices = prices
+        self.base_spread = base_spread
+        self.skew_factor = skew_factor
 
-    order_book = {"bid": {"bid": bid, "quantity": 1}, "ask": {"ask": ask, "quantity": 1}}
+    def get_reservation_price(self, mid_price):
+        return mid_price - self.inventory * self.skew_factor
 
-    return order_book
+    def fill_order_book(self, reservation_price):
+        bid = round(reservation_price - (self.spread / 2), 2)
+        ask = round(reservation_price + (self.spread / 2), 2)
 
-def adjust_mid_price(mid_price):
-    random_num = round(random.uniform(-0.05, 0.05), 2)
+        order_book = {"bid": {"bid": bid, "quantity": 1}, "ask": {"ask": ask, "quantity": 1}}
 
-    mid_price = round(mid_price + random_num, 2)
+        return order_book
 
-    return mid_price
+    def adjust_mid_price(self):
+        random_num = round(random.uniform(-0.05, 0.05), 2)
 
-def calculate_PnL(cash, inventory, prices, mid_price):
-    total_pnl = cash + (inventory * mid_price)
-    inventory_pnl = 0
+        mid_price = round(self.mid_price + random_num, 2)
 
-    if len(prices) > 1:
-        inventory_pnl = inventory * (mid_price - prices[-2])
-    else:
+        return mid_price
+
+    def calculate_pnl(self):
+        total_pnl = self.cash + (self.inventory * self.mid_price)
         inventory_pnl = 0
 
-    return total_pnl, inventory_pnl
+        if len(self.prices) > 1:
+            inventory_pnl = self.inventory * (self.mid_price - self.prices[-2])
+        else:
+            inventory_pnl = 0
 
-def adjust_spread(base_spread, prices):
-    if len(prices) > 2:
-        changes = numpy.diff(prices)
-        volatility = numpy.std(changes)
-        return base_spread + (K * volatility)
+        return total_pnl, inventory_pnl
 
-    return base_spread
+    def adjust_spread(self, prices):
+        if len(prices) > 2:
+            changes = numpy.diff(self.prices)
+            volatility = numpy.std(changes)
+            return self.base_spread + (K * volatility)
+
+        return self.base_spread
+
+    def buy(self, price):
+        self.inventory -= 1
+        self.cash += price
+
+    def sell(self, price):
+        self.inventory += 1
+        self.cash -= price

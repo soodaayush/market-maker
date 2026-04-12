@@ -1,8 +1,8 @@
 # Market Maker
 import time
 
-from market_maker import fill_order_book, adjust_mid_price, calculate_PnL, adjust_spread
-from trader import trade
+from market_maker import MarketMaker
+from trader import TraderClass
 
 # - Program is based on a ticker, where
 # 	- Mid prices are updated every tick to determine bid and ask using a specified spread (+- 0.5)
@@ -49,29 +49,44 @@ SKEW_FACTOR = 0.01
 prices = []
 spread = 0
 
+market_maker = MarketMaker(spread, MID_PRICE, CASH, INVENTORY, prices, BASE_SPREAD, SKEW_FACTOR)
+trader = TraderClass()
+
 while TICKER < MAX_TICKS:
-    reservation_price = MID_PRICE - (INVENTORY * SKEW_FACTOR)
+    reservation_price = market_maker.get_reservation_price(MID_PRICE)
     TICKER += 1
 
     if len(prices) > 50:
         prices.pop(0)
 
-    spread = adjust_spread(BASE_SPREAD, prices)
-    order_book = fill_order_book(spread, reservation_price)
-    new_mid_price = adjust_mid_price(MID_PRICE)
-    action, price, INVENTORY, CASH = trade(order_book, INVENTORY, MIN_INVENTORY, MAX_INVENTORY, CASH, prices, MID_PRICE, new_mid_price)
+
+    spread = market_maker.adjust_spread(prices)
+    order_book = market_maker.fill_order_book(reservation_price)
+    new_mid_price = market_maker.adjust_mid_price()
+
+    action = trader.trade(prices, MID_PRICE, new_mid_price)
+
+    if action == "BUY":
+        price = order_book["ask"].get("ask")
+        market_maker.sell(price)
+    elif action == "SELL":
+        price = order_book["bid"].get("bid")
+        market_maker.buy(price)
+    else:
+        price = 0
+
     MID_PRICE = new_mid_price
-    total_pnl, inventory_pnl = calculate_PnL(CASH, INVENTORY, prices, MID_PRICE)
+    total_pnl, inventory_pnl = market_maker.calculate_pnl()
 
     prices.append(MID_PRICE)
 
     print(f"Tick: {TICKER}")
-    print(f"Mid Price: ${MID_PRICE}")
+    print(f"Mid Price: ${market_maker.mid_price}")
     print(f"Market Maker Quote: Bid=${order_book['bid'].get('bid')} Ask=${order_book['ask'].get('ask')}")
     print(f"Trader Action: {action}")
     print(f"Trade Price: ${price}")
-    print(f"Inventory: {INVENTORY}")
-    print(f"Cash: ${round(CASH, 2)}")
+    print(f"Inventory: {market_maker.inventory}")
+    print(f"Cash: ${round(market_maker.cash, 2)}")
     print(f"Total PnL: ${round(total_pnl, 2)}")
     print(f"Inventory PnL: ${round(inventory_pnl, 2)}")
 
