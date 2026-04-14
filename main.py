@@ -36,35 +36,24 @@ from trader import TraderClass
 
 # Global Variables
 
-BASE_SPREAD = 0.1
 MAX_TICKS = 20
 TICKER = 0
-MID_PRICE = 100
-CASH = 500
-INVENTORY = 0
-MAX_INVENTORY = 20
-MIN_INVENTORY = -20
-SKEW_FACTOR = 0.01
 
-prices = []
-spread = 0
-
-market_maker = MarketMaker(spread, MID_PRICE, CASH, INVENTORY, prices, BASE_SPREAD, SKEW_FACTOR)
+market_maker = MarketMaker()
 trader = TraderClass()
 
 while TICKER < MAX_TICKS:
-    reservation_price = market_maker.get_reservation_price(MID_PRICE)
+    reservation_price = market_maker.get_reservation_price()
     TICKER += 1
 
-    if len(prices) > 50:
-        prices.pop(0)
+    if len(market_maker.prices) > 50:
+        market_maker.prices.pop(0)
 
-
-    spread = market_maker.adjust_spread(prices)
+    market_maker.adjust_spread()
     order_book = market_maker.fill_order_book(reservation_price)
     new_mid_price = market_maker.adjust_mid_price()
 
-    action = trader.trade(prices, MID_PRICE, new_mid_price)
+    action = trader.trade(market_maker.prices, market_maker.mid_price, new_mid_price)
 
     if action == "BUY":
         price = order_book["ask"].get("ask")
@@ -75,10 +64,9 @@ while TICKER < MAX_TICKS:
     else:
         price = 0
 
-    MID_PRICE = new_mid_price
-    total_pnl, inventory_pnl = market_maker.calculate_pnl()
+    market_maker.calculate_pnl()
 
-    prices.append(MID_PRICE)
+    market_maker.prices.append(market_maker.mid_price)
 
     print(f"Tick: {TICKER}")
     print(f"Mid Price: ${market_maker.mid_price}")
@@ -87,8 +75,8 @@ while TICKER < MAX_TICKS:
     print(f"Trade Price: ${price}")
     print(f"Inventory: {market_maker.inventory}")
     print(f"Cash: ${round(market_maker.cash, 2)}")
-    print(f"Total PnL: ${round(total_pnl, 2)}")
-    print(f"Inventory PnL: ${round(inventory_pnl, 2)}")
+    print(f"Total PnL: ${round(market_maker.total_pnl, 2)}")
+    print(f"Inventory PnL: ${round(market_maker.inventory_pnl, 2)}")
 
     print("\n")
 
