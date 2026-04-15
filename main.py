@@ -43,34 +43,34 @@ market_maker = MarketMaker()
 trader = TraderClass()
 
 while TICKER < MAX_TICKS:
-    reservation_price = market_maker.get_reservation_price()
+    market_maker.get_reservation_price()
     TICKER += 1
 
     if len(market_maker.prices) > 50:
         market_maker.prices.pop(0)
 
     market_maker.adjust_spread()
-    order_book = market_maker.fill_order_book(reservation_price)
-    new_mid_price = market_maker.adjust_mid_price()
+    order_book = market_maker.fill_order_book()
+    market_maker.adjust_mid_price()
 
-    action = trader.trade(market_maker.prices, market_maker.mid_price, new_mid_price)
+    action = trader.trade(market_maker.prices, market_maker.mid_price, market_maker.new_mid_price)
 
     if action == "BUY":
-        price = order_book["ask"].get("ask")
+        price = market_maker.order_book["ask"].get("ask")
         market_maker.sell(price)
     elif action == "SELL":
-        price = order_book["bid"].get("bid")
+        price = market_maker.order_book["bid"].get("bid")
         market_maker.buy(price)
     else:
         price = 0
 
     market_maker.calculate_pnl()
-
+    market_maker.change_mid_price()
     market_maker.prices.append(market_maker.mid_price)
 
     print(f"Tick: {TICKER}")
     print(f"Mid Price: ${market_maker.mid_price}")
-    print(f"Market Maker Quote: Bid=${order_book['bid'].get('bid')} Ask=${order_book['ask'].get('ask')}")
+    print(f"Market Maker Quote: Bid=${market_maker.order_book['bid'].get('bid')} Ask=${market_maker.order_book['ask'].get('ask')}")
     print(f"Trader Action: {action}")
     print(f"Trade Price: ${price}")
     print(f"Inventory: {market_maker.inventory}")

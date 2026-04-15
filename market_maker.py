@@ -6,6 +6,7 @@ K = 3
 class MarketMaker:
     def __init__(self):
         self.mid_price = 100
+        self.new_mid_price = 0
         self.cash = 500
         self.inventory = 0
         self.prices = []
@@ -13,22 +14,25 @@ class MarketMaker:
         self.skew_factor = 0.01
         self.inventory_pnl = 0
         self.total_pnl = 0
+        self.order_book = {}
+        self.reservation_price = 0
 
     def get_reservation_price(self):
-        return self.mid_price - self.inventory * self.skew_factor
+        self.reservation_price = self.mid_price - self.inventory * self.skew_factor
 
-    def fill_order_book(self, reservation_price):
-        bid = round(reservation_price - (self.base_spread / 2), 2)
-        ask = round(reservation_price + (self.base_spread / 2), 2)
+    def fill_order_book(self):
+        bid = round(self.reservation_price - (self.base_spread / 2), 2)
+        ask = round(self.reservation_price + (self.base_spread / 2), 2)
 
-        order_book = {"bid": {"bid": bid, "quantity": 1}, "ask": {"ask": ask, "quantity": 1}}
-
-        return order_book
+        self.order_book = {"bid": {"bid": bid, "quantity": 1}, "ask": {"ask": ask, "quantity": 1}}
 
     def adjust_mid_price(self):
         random_num = round(random.uniform(-0.05, 0.05), 2)
 
-        self.mid_price = round(self.mid_price + random_num, 2)
+        self.new_mid_price = round(self.mid_price + random_num, 2)
+
+    def change_mid_price(self):
+        self.mid_price = self.new_mid_price
 
     def calculate_pnl(self):
         self.total_pnl = self.cash + (self.inventory * self.mid_price)
