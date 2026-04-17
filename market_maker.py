@@ -17,7 +17,7 @@ class MarketMaker:
         self.order_book = {}
         self.reservation_price = 0
 
-    def get_reservation_price(self):
+    def update_reservation_price(self):
         self.reservation_price = self.mid_price - self.inventory * self.skew_factor
 
     def fill_order_book(self):
@@ -28,11 +28,7 @@ class MarketMaker:
 
     def adjust_mid_price(self):
         random_num = round(random.uniform(-0.05, 0.05), 2)
-
         self.new_mid_price = round(self.mid_price + random_num, 2)
-
-    def change_mid_price(self):
-        self.mid_price = self.new_mid_price
 
     def calculate_pnl(self):
         self.total_pnl = self.cash + (self.inventory * self.mid_price)
@@ -46,14 +42,14 @@ class MarketMaker:
         if len(self.prices) > 2:
             changes = numpy.diff(self.prices)
             volatility = numpy.std(changes)
-            self.base_spread = self.base_spread + (K * volatility)
+            self.base_spread = 0.1 + (K * volatility)
         else:
             self.base_spread = 0.01
 
     def buy(self, price):
-        self.inventory -= 1
-        self.cash += price
-
-    def sell(self, price):
         self.inventory += 1
         self.cash -= price
+
+    def sell(self, price):
+        self.inventory -= 1
+        self.cash += price
