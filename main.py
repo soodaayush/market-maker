@@ -39,12 +39,14 @@ from trader import TraderClass
 MAX_TICKS = 20
 TICKER = 0
 
+# Classes
+
 market_maker = MarketMaker()
 trader = TraderClass()
 
 while TICKER < MAX_TICKS:
-    market_maker.update_reservation_price()
     TICKER += 1
+    market_maker.update_reservation_price()
 
     if len(market_maker.prices) > 50:
         market_maker.prices.pop(0)
@@ -66,6 +68,8 @@ while TICKER < MAX_TICKS:
 
     market_maker.calculate_pnl()
     market_maker.prices.append(market_maker.mid_price)
+
+    # Prints data
 
     print(f"Tick: {TICKER}")
     print(f"Mid Price: ${market_maker.mid_price}")
