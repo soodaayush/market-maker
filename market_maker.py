@@ -11,6 +11,8 @@ class MarketMaker:
         self.new_mid_price = 0
         self.cash = 500
         self.inventory = 0
+        self.max_inventory = 10
+        self.min_inventory = -10
         self.prices = []
         self.base_spread = 0.1
         self.skew_factor = 0.01
@@ -67,11 +69,13 @@ class MarketMaker:
     def buy(self, price):
         # Market maker buys from trader
 
-        self.inventory += 1
-        self.cash -= price
+        if self.inventory < self.max_inventory:
+            self.inventory += 1
+            self.cash -= price
 
     def sell(self, price):
         # Market maker sells to trader
 
-        self.inventory -= 1
-        self.cash += price
+        if self.inventory > self.min_inventory:
+            self.inventory -= 1
+            self.cash += price

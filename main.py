@@ -46,6 +46,7 @@ trader = TraderClass()
 
 while TICKER < MAX_TICKS:
     TICKER += 1
+    market_maker.adjust_mid_price()
     market_maker.update_reservation_price()
 
     if len(market_maker.prices) > 50:
@@ -53,7 +54,6 @@ while TICKER < MAX_TICKS:
 
     market_maker.adjust_spread()
     order_book = market_maker.fill_order_book()
-    market_maker.adjust_mid_price()
 
     action = trader.trade(market_maker.prices, market_maker.mid_price, market_maker.new_mid_price)
 
@@ -72,7 +72,7 @@ while TICKER < MAX_TICKS:
     # Prints data
 
     print(f"Tick: {TICKER}")
-    print(f"Mid Price: ${market_maker.mid_price}")
+    print(f"Mid Price: ${market_maker.new_mid_price}")
     print(f"Market Maker Quote: Bid=${market_maker.order_book['bid'].get('bid')} Ask=${market_maker.order_book['ask'].get('ask')}")
     print(f"Trader Action: {action}")
     print(f"Trade Price: ${price}")
