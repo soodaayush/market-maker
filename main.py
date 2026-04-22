@@ -53,7 +53,7 @@ while TICKER < MAX_TICKS:
         market_maker.prices.pop(0)
 
     market_maker.adjust_spread()
-    order_book = market_maker.fill_order_book()
+    market_maker.fill_order_book()
 
     action = trader.trade(market_maker.prices, market_maker.mid_price, market_maker.new_mid_price)
 

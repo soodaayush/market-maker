@@ -2,6 +2,7 @@ import random
 
 # Trader types
 trader_choices = ["random", "momentum", "informed"]
+probability_trade = 0.6
 
 class TraderClass:
     def __init__(self):
@@ -35,17 +36,19 @@ class TraderClass:
 
         recent_change = prices[-1] - prices[-5]
 
-        if recent_change > 0:
-            return "BUY"
-        elif recent_change < 0:
-            return "SELL"
+        if random.random() < probability_trade:
+            if recent_change > 0:
+                return "BUY"
+            elif recent_change < 0:
+                return "SELL"
         else:
             return "NONE"
 
     def informed_trade(self, mid_price, new_mid_price):
         # Executes an informed trade based on future mid price
 
-        if new_mid_price > mid_price:
-            return "BUY"
+        if random.random() < probability_trade:
+            if new_mid_price > mid_price:
+                return "BUY"
         else:
             return "SELL"
