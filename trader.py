@@ -1,5 +1,7 @@
 import random
 
+import numpy
+
 # Trader types
 trader_choices = ["random", "momentum", "informed"]
 probability_trade = 0.6
@@ -31,15 +33,16 @@ class TraderClass:
 
     def momentum_trade(self, prices):
         # Executes a trade based on a price trend
-        # Prices rising -> BUY
-        # Prices falling -> SELL
+        # If average of last 3 prices is larger than average of last 10 prices -> BUY
+        # Else: -> SELL
 
-        recent_change = prices[-1] - prices[-5]
+        short_term_average_price = numpy.average(prices[-3:])
+        long_term_average_price = numpy.average(prices[-10:])
 
         if random.random() < probability_trade:
-            if recent_change > 0:
+            if short_term_average_price > long_term_average_price:
                 return "BUY"
-            elif recent_change < 0:
+            else:
                 return "SELL"
         else:
             return "NONE"
