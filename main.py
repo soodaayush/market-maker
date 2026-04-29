@@ -1,5 +1,7 @@
 # Market Maker
 import time
+import numpy
+import matplotlib.pyplot as plt
 
 from market_maker import MarketMaker
 from trader import TraderClass
@@ -36,8 +38,12 @@ from trader import TraderClass
 
 # Global Variables
 
-MAX_TICKS = 20
+MAX_TICKS = 5
 TICKER = 0
+mid_prices = []
+tickers = []
+pnl = []
+cash = []
 
 # Classes
 
@@ -46,6 +52,7 @@ trader = TraderClass()
 
 while TICKER < MAX_TICKS:
     TICKER += 1
+    tickers.append(TICKER)
     market_maker.adjust_mid_price()
     market_maker.update_reservation_price()
 
@@ -69,6 +76,10 @@ while TICKER < MAX_TICKS:
     market_maker.calculate_pnl()
     market_maker.prices.append(market_maker.mid_price)
 
+    mid_prices.append(market_maker.mid_price)
+    pnl.append(market_maker.total_pnl)
+    cash.append(market_maker.cash)
+
     # Prints data
 
     print(f"Tick: {TICKER}")
@@ -84,3 +95,19 @@ while TICKER < MAX_TICKS:
     print("\n")
 
     time.sleep(5)
+
+
+x_points = numpy.array(tickers)
+
+plt.plot(x_points, mid_prices, label="Mid Price")
+plt.plot(x_points, pnl, label="PnL")
+plt.plot(x_points, cash, label="Cash")
+
+plt.title("Results")
+plt.xlabel("Tick")
+plt.ylabel("Value")
+
+plt.legend()
+plt.grid(True)
+
+plt.show()

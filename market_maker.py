@@ -60,7 +60,7 @@ class MarketMaker:
         # Adjusts spread based on market volatility
 
         if len(self.prices) > 2:
-            changes = numpy.diff(self.prices)
+            changes = numpy.diff(self.prices[-20:])
             volatility = numpy.std(changes)
             self.base_spread = 0.1 + (self.K * volatility)
         else:
