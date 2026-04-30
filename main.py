@@ -44,6 +44,7 @@ mid_prices = []
 tickers = []
 pnl = []
 cash = []
+inventory = []
 
 # Classes
 
@@ -79,6 +80,7 @@ while TICKER < MAX_TICKS:
     mid_prices.append(market_maker.mid_price)
     pnl.append(market_maker.total_pnl)
     cash.append(market_maker.cash)
+    inventory.append(market_maker.inventory)
 
     # Prints data
 
@@ -99,15 +101,27 @@ while TICKER < MAX_TICKS:
 
 x_points = numpy.array(tickers)
 
-plt.plot(x_points, mid_prices, label="Mid Price")
-plt.plot(x_points, pnl, label="PnL")
-plt.plot(x_points, cash, label="Cash")
+fig, axs = plt.subplots(3, 1, figsize=(10, 8))
 
-plt.title("Results")
-plt.xlabel("Tick")
-plt.ylabel("Value")
+axs[0].plot(x_points, mid_prices)
+axs[0].set_ylim(99.95, 100.1)
+axs[0].set_title("Price")
 
-plt.legend()
-plt.grid(True)
+axs[1].plot(x_points, pnl)
+axs[1].set_title("PnL")
+
+axs[2].plot(x_points, inventory)
+axs[2].set_title("Inventory")
+
+# plt.plot(x_points, mid_prices, label="Mid Price")
+# plt.plot(x_points, pnl, label="PnL")
+# plt.plot(x_points, inventory, label="Inventory")
+#
+# plt.title("Results")
+# plt.xlabel("Tick")
+# plt.ylabel("Value")
+#
+# plt.legend()
+# plt.grid(True)
 
 plt.show()
