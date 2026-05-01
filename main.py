@@ -77,7 +77,7 @@ while TICKER < MAX_TICKS:
     market_maker.calculate_pnl()
     market_maker.prices.append(market_maker.mid_price)
 
-    mid_prices.append(market_maker.mid_price)
+    mid_prices.append(market_maker.new_mid_price)
     pnl.append(market_maker.total_pnl)
     cash.append(market_maker.cash)
     inventory.append(market_maker.inventory)
@@ -112,16 +112,5 @@ axs[1].set_title("PnL")
 
 axs[2].plot(x_points, inventory)
 axs[2].set_title("Inventory")
-
-# plt.plot(x_points, mid_prices, label="Mid Price")
-# plt.plot(x_points, pnl, label="PnL")
-# plt.plot(x_points, inventory, label="Inventory")
-#
-# plt.title("Results")
-# plt.xlabel("Tick")
-# plt.ylabel("Value")
-#
-# plt.legend()
-# plt.grid(True)
 
 plt.show()
