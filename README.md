@@ -2,6 +2,29 @@
 
 A Python implementation of a market maker, a trading system that continuously places buy and sell order to provide liquidity to the market and facilitates efficient asset trading. 
 
+## Features
+
+- Simulates bid and ask pricing with a dynamic mid-price  
+- Updates mid-price using stochastic (random) movements  
+- Adjusts reservation price based on inventory levels:  
+	- Lowers prices when inventory is high to encourage selling  
+	- Raises prices when inventory is low to encourage buying  
+- Dynamically adjusts spread based on market volatility  
+- Simulates multiple trader types for realistic market behavior:  
+	- **Random Trader**: places random buy and sell orders  
+	- **Momentum Trader**: buys during upward trends and sells during downward trends  
+	- **Informed Trader**: trades based on knowledge of future price movements  
+- Tracks performance metrics including:  
+	- Total Profit and Loss (PnL)  
+	- Inventory-based PnL  
+- Provides data visualization using Matplotlib
+
+## Inspiration
+
+I have always been curious about finance, especially as I get closer to adulthood and will need to navigate things like credit cards, loans, and investments. While I had some basic knowledge of the stock market, I wanted to deepen my understanding.  
+  
+One question that stood out to me was how traders are able to buy and sell assets in real time with little to no interruption or error. This curiosity ultimately led me to explore how markets function behind the scenes, particularly the role of market makers.
+
 ## What is a Market Maker?
 
 The description provided in the first line of the README would not have made much sense to me when I first started this project months ago, as it contained a lot of jargon I did not fully understand. When explaining a concept, I prefer using analogies rather than relying on highly abstract ideas.
