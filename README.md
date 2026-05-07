@@ -50,3 +50,24 @@ They continuously quote two prices:
 - **Ask price**: the price at which they are willing to sell  
 
 The difference between the bid and ask prices is the *spread*, which is how market makers generate profit.
+
+## Installation
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/soodaayush/market-maker.git
+cd market-maker
+```
+
+2. Install the required dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+ 3. Run the project
+ 
+ ```bash
+python main.py
+```
