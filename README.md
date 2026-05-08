@@ -19,6 +19,22 @@ A Python implementation of a market maker, a trading system that continuously pl
 	- Inventory-based PnL  
 - Provides data visualization using Matplotlib
 
+## Example Output
+
+```bash
+Tick: 5
+Mid Price: $100.0
+Market Maker Quote: Bid=$99.97 Ask=$100.07
+Trader Action: SELL
+Trade Price: $99.97
+Inventory: -1
+Cash: $600.05
+Total PnL: $500.05
+Inventory PnL: $0
+```
+
+<img width="636" height="506" alt="Screenshot 2026-05-08 at 8 56 30 AM" src="https://github.com/user-attachments/assets/3eb90f09-5b06-4388-b7f6-0ab4cf7ea20d" />
+
 ## Inspiration
 
 I have always been curious about finance, especially as I get closer to adulthood and will need to navigate things like credit cards, loans, and investments. While I had some basic knowledge of the stock market, I wanted to deepen my understanding.  
