@@ -1,5 +1,4 @@
 # Market Maker
-import time
 import numpy
 import matplotlib.pyplot as plt
 
@@ -37,32 +36,35 @@ from trader import TraderClass
 # 	- Next tick
 
 # Global Variables
-
-MAX_TICKS = 5
+MAX_TICKS = 1000
 TICKER = 0
+
+# Data tracking
 mid_prices = []
 tickers = []
 pnl = []
 cash = []
 inventory = []
+trades = []
 
 # Classes
-
 market_maker = MarketMaker()
 trader = TraderClass()
 
 while TICKER < MAX_TICKS:
+    # Increment and store ticker
     TICKER += 1
     tickers.append(TICKER)
-    market_maker.adjust_mid_price()
+
+    # Generate next mid price
+    market_maker.generate_next_price()
+
+    # Market maker updates quotes
     market_maker.update_reservation_price()
-
-    if len(market_maker.prices) > 50:
-        market_maker.prices.pop(0)
-
     market_maker.adjust_spread()
     market_maker.fill_order_book()
 
+    # Trade is executed
     action = trader.trade(market_maker.prices, market_maker.mid_price, market_maker.new_mid_price)
 
     if action == "BUY":
@@ -74,19 +76,25 @@ while TICKER < MAX_TICKS:
     else:
         price = 0
 
+    # PnL and new mid price is calculated
     market_maker.calculate_pnl()
-    market_maker.prices.append(market_maker.mid_price)
+    market_maker.adjust_mid_price()
 
-    mid_prices.append(market_maker.new_mid_price)
+    # Track data
+    market_maker.prices.append(market_maker.mid_price)
+    mid_prices.append(market_maker.mid_price)
     pnl.append(market_maker.total_pnl)
     cash.append(market_maker.cash)
     inventory.append(market_maker.inventory)
+    trades.append(
+        {"tick": TICKER, "action": action, "price": market_maker.mid_price, "inventory": market_maker.inventory,
+         "cash": market_maker.cash})
 
     # Prints data
-
     print(f"Tick: {TICKER}")
     print(f"Mid Price: ${market_maker.new_mid_price}")
-    print(f"Market Maker Quote: Bid=${market_maker.order_book['bid'].get('bid')} Ask=${market_maker.order_book['ask'].get('ask')}")
+    print(
+        f"Market Maker Quote: Bid=${market_maker.order_book['bid'].get('bid')} Ask=${market_maker.order_book['ask'].get('ask')}")
     print(f"Trader Action: {action}")
     print(f"Trade Price: ${price}")
     print(f"Inventory: {market_maker.inventory}")
@@ -96,15 +104,12 @@ while TICKER < MAX_TICKS:
 
     print("\n")
 
-    time.sleep(5)
-
-
 x_points = numpy.array(tickers)
 
 fig, axs = plt.subplots(3, 1, figsize=(10, 8))
 
 axs[0].plot(x_points, mid_prices)
-axs[0].set_ylim(99.95, 100.1)
+axs[0].set_ylim(99, 102)
 axs[0].set_title("Price")
 
 axs[1].plot(x_points, pnl)

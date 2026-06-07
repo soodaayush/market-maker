@@ -5,6 +5,7 @@
 import random
 import numpy
 
+
 class MarketMaker:
     def __init__(self):
         self.mid_price = 100
@@ -38,11 +39,14 @@ class MarketMaker:
 
         self.order_book = {"bid": {"bid": bid, "quantity": 1}, "ask": {"ask": ask, "quantity": 1}}
 
+    def generate_next_price(self):
+        random_num = round(random.uniform(-0.05, 0.05), 2)
+        self.new_mid_price = round(self.mid_price + random_num, 2)
+
     def adjust_mid_price(self):
         # Simulates random market movement by adding market noise
 
-        random_num = round(random.uniform(-0.05, 0.05), 2)
-        self.new_mid_price = round(self.mid_price + random_num, 2)
+        self.mid_price = self.new_mid_price
 
     def calculate_pnl(self):
         # Calculates Total PnL and Inventory PnL

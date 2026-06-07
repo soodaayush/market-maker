@@ -1,10 +1,10 @@
 import random
-
 import numpy
 
 # Trader types
 trader_choices = ["random", "momentum", "informed"]
 probability_trade = 0.6
+
 
 class TraderClass:
     def __init__(self):
