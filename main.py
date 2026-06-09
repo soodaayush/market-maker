@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 from market_maker import MarketMaker
 from trader import TraderClass
+from order_book import OrderBook
 
 # - Program is based on a ticker, where
 # 	- Mid prices are updated every tick to determine bid and ask using a specified spread (+- 0.5)
@@ -50,6 +51,7 @@ trades = []
 # Classes
 market_maker = MarketMaker()
 trader = TraderClass()
+order_book = OrderBook()
 
 while TICKER < MAX_TICKS:
     # Increment and store ticker
@@ -63,6 +65,8 @@ while TICKER < MAX_TICKS:
     market_maker.update_reservation_price()
     market_maker.adjust_spread()
     market_maker.fill_order_book()
+
+    order_book.generate_quote(market_maker.reservation_price, market_maker.base_spread)
 
     # Trade is executed
     action = trader.trade(market_maker.prices, market_maker.mid_price, market_maker.new_mid_price)
@@ -119,3 +123,5 @@ axs[2].plot(x_points, inventory)
 axs[2].set_title("Inventory")
 
 plt.show()
+
+print(order_book.order_book)
