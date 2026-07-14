@@ -1,5 +1,9 @@
 # Market Maker
 
+<img width="1200" height="630" alt="Market Maker Logo" src="https://github.com/user-attachments/assets/b80e4d40-2938-4ecc-b5dc-30190ddb1c65" />
+<br />
+<br />
+
 A Python implementation of a market maker, a trading system that continuously places buy and sell order to provide liquidity to the market and facilitates efficient asset trading. 
 
 ## Features
